@@ -9,3 +9,12 @@
         @apply font-poppins bg-ashe-light
     }
 }
+.whitebar:after{
+    position: absolute;
+    content: "";
+    width: 50px;
+    height:2px;
+    background-color: #fff;
+    left:-56px;
+    top:50%
+}
