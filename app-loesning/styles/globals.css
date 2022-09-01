@@ -8,6 +8,17 @@
     html {
         @apply font-poppins bg-ashe-light
     }
+    /* .homecard:after {
+        position: absolute;
+        content: "";
+        width: 80%;
+        height:100px;
+        border-radius:0 50px 0 0;
+        left:-16px;
+        bottom:-20px;
+        @apply bg-curry;
+    
+    } */
 }
 .whitebar:after{
     position: absolute;
@@ -17,4 +28,7 @@
     background-color: #fff;
     left:-56px;
     top:50%
+}
+.roundedrightcorner{
+    border-radius:0 50px 0 0;
 }

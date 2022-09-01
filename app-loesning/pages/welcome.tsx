@@ -26,7 +26,7 @@ const Welcome: NextPage = () => {
             <Image
               layout="fill"
               objectFit="cover"
-              objectPosition="center"
+              objectPosition="top center"
               src={coverimg1}
               alt="cover"
             />
@@ -43,7 +43,7 @@ const Welcome: NextPage = () => {
             </div>
           </div>
         </div>
-        <footer className="absolute -translate-x-1/2 bottom-10 left-1/2">
+        <footer className="absolute -translate-x-1/2 bottom-24 md:bottom-10 left-1/2">
           <Link href="/home">
             <button className="py-4 font-bold uppercase rounded-full w-44 bg-curry text-licorice">
               start training
