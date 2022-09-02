@@ -24,6 +24,7 @@ const Welcome: NextPage = () => {
         <div className="relative w-screen h-screen">
           <div className="h-1/2 -z-10">
             <Image
+              loading="lazy"
               layout="fill"
               objectFit="cover"
               objectPosition="top center"
@@ -34,6 +35,7 @@ const Welcome: NextPage = () => {
           <div className="absolute bottom-0 w-screen h-[50vh]">
             <div className="h-1/2 -z-10">
               <Image
+                loading="lazy"
                 layout="fill"
                 objectFit="cover"
                 objectPosition="center"
