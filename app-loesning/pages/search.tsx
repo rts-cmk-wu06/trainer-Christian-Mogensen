@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { Carousel } from "./home";
 import { AiOutlineSearch } from "react-icons/ai";
 import { AnimatePresence, motion, MotionConfig } from "framer-motion";
+import { throttle } from "lodash";
 
 export async function getStaticProps() {
   const urlClasses = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
@@ -23,7 +24,7 @@ export async function getStaticProps() {
   };
 }
 const SearchItem = ({ children }: any) => (
-  <li className="p-2 px-4 rounded-full bg-curry">{children}</li>
+  <p className="p-2 px-4 rounded-full bg-curry">{children}</p>
 );
 const SearchBar = (props: any) => {
   const [data, setData] = useState<any>([]);
@@ -87,30 +88,34 @@ const SearchBar = (props: any) => {
         />
       </div>
 
-      {toggle && (
-        <MotionConfig transition={{ duration: 5 }}>
-          <div className="mt-3">
-            <AnimatePresence initial={false}>
-              <motion.ul
-                key={results}
-                animate={{ height: results ? "auto" : 0 }}
-                className="transition-all max-h-[350px] overflow-y-auto flex flex-col w-full p-4 gap-2 border rounded-[30px] bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-              >
+      <div className="mt-3">
+        {toggle && (
+          <AnimatePresence>
+            <motion.div
+              key={results}
+              initial={{ height: 0 }}
+              animate={{ height: "auto" }}
+              exit={{ height: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <ul className="overflow-y-auto flex flex-col w-full p-4 gap-2 border rounded-[30px] bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium">
                 {results.map((item: any) => (
-                  <li className="flex flex-wrap gap-2 pb-2 border-b last-of-type:border-none last-of-type:pb-0 border-ashe-medium">
+                  <li
+                    key={new Date() + item.id}
+                    className="flex flex-wrap gap-2 pb-2 border-b last-of-type:border-none last-of-type:pb-0 border-ashe-medium"
+                  >
                     <SearchItem>{item.className}</SearchItem>
                     <SearchItem>{item.trainer.trainerName}</SearchItem>
                     <SearchItem>{item.classDay}</SearchItem>
                     <SearchItem>{item.classTime}</SearchItem>
                   </li>
                 ))}
-              </motion.ul>
-            </AnimatePresence>
-          </div>
-        </MotionConfig>
-      )}
-
-      {/* {results?.map((item: any) => console.log(item))} */}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
+        )}
+      </div>
     </div>
   );
 };

@@ -94,7 +94,7 @@ export const Carousel = ({ data }: any) => {
               src={asset.asset.url}
               width={150}
               height={180}
-              loading="lazy"
+              priority={true}
               layout="responsive"
               objectFit="cover"
             />

@@ -10,6 +10,10 @@
     }
 
 }
+.speed{
+    transition: 10s;
+    overflow:hidden;
+}
 .whitebar:after{
     position: absolute;
     content: "";
