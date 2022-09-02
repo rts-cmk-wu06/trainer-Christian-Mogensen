@@ -3,11 +3,10 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { AiFillStar, AiOutlineStar } from "react-icons/ai";
-import Navigation from "../pages/components/Nav/Navigation";
+import { AiFillStar } from "react-icons/ai";
 
 export async function getStaticProps() {
-  const url = "http://localhost:4000/api/v1/classes";
+  const url = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
   const res = await fetch(url);
   const assets = await res.json();
   return {
