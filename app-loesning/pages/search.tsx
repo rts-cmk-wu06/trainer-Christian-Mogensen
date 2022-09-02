@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Carousel } from "./home";
 import { AiOutlineSearch } from "react-icons/ai";
+import { AnimatePresence, motion, MotionConfig } from "framer-motion";
 
 export async function getStaticProps() {
   const urlClasses = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
@@ -25,42 +26,48 @@ const SearchItem = ({ children }: any) => (
   <li className="p-2 px-4 rounded-full bg-curry">{children}</li>
 );
 const SearchBar = (props: any) => {
-  const [data, setData] = useState<any>(props.data);
-  //   const [results, setResults] = useState<any>([]); // <-- results state
-  //   const fetchStudents = async () => {
-  //     const res = await fetch("");
-  //     const json = await res.json();
-  //     setData(json.students);
-  //     setResults(json.students); // <-- seed the results state
-  //   };
+  const [data, setData] = useState<any>([]);
+  const [results, setResults] = useState<any>(); // <-- results state
 
-  //   useEffect(() => {
-  //     setData(classes);
-  //     console.log(classes);
-  //   }, []);
+  const [toggle, setToggle] = useState(false);
 
-  //   const searchData = (pattern: any) => {
-  //     if (!pattern) {
-  //       setResults(data); // <-- reset to full data state
-  //       return;
-  //     }
+  const fetchClasses = async () => {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`
+    );
 
-  //     const fuse = new Fuse(data, {
-  //       // <-- use data state
-  //       keys: ["className"],
-  //     });
+    const json = await res.json();
+    setData(json);
+    setResults(json); // <-- seed the results state
+  };
 
-  //     const result = fuse.search(pattern);
-  //     const matches: any = [];
-  //     if (!result.length) {
-  //       setResults(data); // <-- reset to full data state
-  //     } else {
-  //       result?.forEach(({ item }) => {
-  //         matches?.push(item);
-  //       });
-  //       setResults(matches); // <-- update results state
-  //     }
-  //   };
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const searchData = (pattern: any) => {
+    if (!pattern) {
+      setResults(data); // <-- reset to full data state
+      return;
+    }
+
+    const fuse = new Fuse(data, {
+      // <-- use data state
+      keys: ["className", "trainer.trainerName", "classDay", "classTime"],
+    });
+
+    const result = fuse.search(pattern);
+
+    const matches: any = [];
+    if (!result.length) {
+      setResults(data); // <-- reset to full data state
+    } else {
+      result.forEach(({ item }) => {
+        matches.push(item);
+      });
+      setResults(matches); // <-- update results state
+    }
+  };
 
   return (
     <div className="w-full">
@@ -71,21 +78,38 @@ const SearchBar = (props: any) => {
           className="w-full p-4 pl-10 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
           // value={data}
           placeholder="Search classes"
-          // onChange={(e) => searchData(e.target.value)}
+          onChange={(e) => {
+            searchData(e.target.value), setToggle(true);
+            if (e.target.value === "") {
+              setToggle(false);
+            }
+          }}
         />
       </div>
-      <div className="mt-3">
-        <ul className=" h-[350px] md:h-auto overflow-y-auto flex flex-col w-full p-4 gap-2 border rounded-[30px] bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium">
-          {data.map((item: any) => (
-            <li className="flex flex-wrap gap-2 pb-2 border-b last-of-type:border-none last-of-type:pb-0 border-ashe-medium">
-              <SearchItem>{item.className}</SearchItem>
-              <SearchItem>{item.trainer.trainerName}</SearchItem>
-              <SearchItem>{item.classDay}</SearchItem>
-              <SearchItem>{item.classTime}</SearchItem>
-            </li>
-          ))}
-        </ul>
-      </div>
+
+      {toggle && (
+        <MotionConfig transition={{ duration: 5 }}>
+          <div className="mt-3">
+            <AnimatePresence initial={false}>
+              <motion.ul
+                key={results}
+                animate={{ height: results ? "auto" : 0 }}
+                className="transition-all max-h-[350px] overflow-y-auto flex flex-col w-full p-4 gap-2 border rounded-[30px] bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+              >
+                {results.map((item: any) => (
+                  <li className="flex flex-wrap gap-2 pb-2 border-b last-of-type:border-none last-of-type:pb-0 border-ashe-medium">
+                    <SearchItem>{item.className}</SearchItem>
+                    <SearchItem>{item.trainer.trainerName}</SearchItem>
+                    <SearchItem>{item.classDay}</SearchItem>
+                    <SearchItem>{item.classTime}</SearchItem>
+                  </li>
+                ))}
+              </motion.ul>
+            </AnimatePresence>
+          </div>
+        </MotionConfig>
+      )}
+
       {/* {results?.map((item: any) => console.log(item))} */}
     </div>
   );
