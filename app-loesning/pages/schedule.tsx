@@ -63,13 +63,11 @@ const userClass: any = {
 };
 const Schedule: NextPage = ({}: any) => {
   const [data, setData] = useState<any>(userClass.classes);
-  //   useEffect(() => {
-  //     setData(userClass.classes);
-  //   }, []);
+
   return (
     <>
       <Head>
-        <title>Svendeprøve - overview</title>
+        <title>Svendeprøve - schedule</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden">
