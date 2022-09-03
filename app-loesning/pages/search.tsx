@@ -1,12 +1,11 @@
+import { AnimatePresence, motion } from "framer-motion";
 import Fuse from "fuse.js";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { Carousel } from "./home";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { AnimatePresence, motion, MotionConfig } from "framer-motion";
-import { throttle } from "lodash";
+import { Carousel } from "./home";
 
 export async function getStaticProps() {
   const urlClasses = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
@@ -28,8 +27,7 @@ const SearchItem = ({ children }: any) => (
 );
 const SearchBar = (props: any) => {
   const [data, setData] = useState<any>([]);
-  const [results, setResults] = useState<any>(); // <-- results state
-
+  const [results, setResults] = useState<any>();
   const [toggle, setToggle] = useState(false);
 
   const fetchClasses = async () => {
@@ -39,7 +37,7 @@ const SearchBar = (props: any) => {
 
     const json = await res.json();
     setData(json);
-    setResults(json); // <-- seed the results state
+    setResults(json);
   };
 
   useEffect(() => {
@@ -48,12 +46,11 @@ const SearchBar = (props: any) => {
 
   const searchData = (pattern: any) => {
     if (!pattern) {
-      setResults(data); // <-- reset to full data state
+      setResults(data);
       return;
     }
 
     const fuse = new Fuse(data, {
-      // <-- use data state
       keys: ["className", "trainer.trainerName", "classDay", "classTime"],
     });
 
@@ -61,12 +58,12 @@ const SearchBar = (props: any) => {
 
     const matches: any = [];
     if (!result.length) {
-      setResults(data); // <-- reset to full data state
+      setResults(data);
     } else {
       result.forEach(({ item }) => {
         matches.push(item);
       });
-      setResults(matches); // <-- update results state
+      setResults(matches);
     }
   };
 
@@ -77,7 +74,6 @@ const SearchBar = (props: any) => {
 
         <input
           className="w-full p-4 pl-10 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-          // value={data}
           placeholder="Search classes"
           onChange={(e) => {
             searchData(e.target.value), setToggle(true);
@@ -87,7 +83,6 @@ const SearchBar = (props: any) => {
           }}
         />
       </div>
-
       <div className="mt-3">
         {toggle && (
           <AnimatePresence>
@@ -138,25 +133,22 @@ const Search: NextPage = ({ classes, trainers }: any) => {
           <div className="capitalize">
             <h2 className="font-bold text-medium">popular trainers</h2>
             <div className="flex flex-col gap-4 mt-3">
-              {trainers.map(
-                (trainer: any) => (
-                  <div key={trainer.id} className="flex gap-4">
-                    <div className="block overflow-hidden h-[120px] rounded-2xl">
-                      <Image
-                        width={120}
-                        height={120}
-                        loading="lazy"
-                        objectFit="cover"
-                        src={trainer.asset.url}
-                      />
-                    </div>
-                    <h3 className="mt-6 font-bold text-medium">
-                      {trainer.trainerName}
-                    </h3>
+              {trainers.map((trainer: any) => (
+                <div key={trainer.id} className="flex gap-4">
+                  <div className="block overflow-hidden h-[120px] rounded-2xl">
+                    <Image
+                      width={120}
+                      height={120}
+                      loading="lazy"
+                      objectFit="cover"
+                      src={trainer.asset.url}
+                    />
                   </div>
-                )
-                //   console.log(trainer.asset.url, trainer.trainerName)
-              )}
+                  <h3 className="mt-6 font-bold text-medium">
+                    {trainer.trainerName}
+                  </h3>
+                </div>
+              ))}
             </div>
           </div>
         </section>
