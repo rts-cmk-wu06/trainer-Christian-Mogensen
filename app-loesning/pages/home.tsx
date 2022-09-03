@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 
@@ -34,26 +35,28 @@ const Home: NextPage = ({ assets }: any) => {
       <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden">
         {/* <Navigation /> */}
         <div className="w-full">
-          <div className="relative w-full overflow-hidden rounded-3xl homecard">
-            {bigimg && (
-              <Image
-                priority={true}
-                className="pointer-events-none"
-                src={bigimg}
-                alt="Picture of the author"
-                width={320}
-                height={320}
-                layout="responsive"
-                objectFit="cover"
-              />
-            )}
-            <div className="absolute bottom-0 left-0 w-3/4 p-5 pb-10 roundedrightcorner bg-curry">
-              <h1 className="text-2xl font-bold ">
-                {assets[number]?.className}
-              </h1>
-              <StarRatingComp />
+          <Link href={`/classes/${assets[number].id}`}>
+            <div className="relative w-full overflow-hidden rounded-3xl homecard">
+              {bigimg && (
+                <Image
+                  priority={true}
+                  className="pointer-events-none"
+                  src={bigimg}
+                  alt="Picture of the author"
+                  width={320}
+                  height={320}
+                  layout="responsive"
+                  objectFit="cover"
+                />
+              )}
+              <div className="absolute bottom-0 left-0 w-3/4 p-5 pb-10 roundedrightcorner bg-curry">
+                <h1 className="text-2xl font-bold ">
+                  {assets[number]?.className}
+                </h1>
+                <StarRatingComp />
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
         <div className="mt-5">
           <h2 className="font-bold text-medium">Classes for you</h2>
@@ -64,9 +67,9 @@ const Home: NextPage = ({ assets }: any) => {
   );
 };
 
-const StarRatingComp = () => {
+export const StarRatingComp = () => {
   return (
-    <div className="flex gap-4 mt-4">
+    <div className="flex gap-4">
       <AiFillStar />
       <AiFillStar />
       <AiFillStar />
@@ -86,23 +89,24 @@ export const Carousel = ({ data }: any) => {
     >
       {data.map((asset: any) => {
         return (
-          <div
-            key={asset.id}
-            className="relative w-1/4 overflow-hidden rounded-3xl"
-          >
-            <Image
-              src={asset.asset.url}
-              width={150}
-              height={180}
-              priority={true}
-              layout="responsive"
-              objectFit="cover"
-            />
-            <div className="absolute bottom-0 left-0 w-full p-5 roundedrightcorner bg-curry">
-              <h3 className="truncate">{asset.className}</h3>
-              <StarRatingComp />
+          <Link key={asset.id} href={`/classes/${asset.id}`}>
+            <div className="relative w-1/4 overflow-hidden rounded-3xl">
+              <Image
+                src={asset.asset.url}
+                width={150}
+                height={180}
+                priority={true}
+                layout="responsive"
+                objectFit="cover"
+              />
+              <div className="absolute bottom-0 left-0 w-full p-5 roundedrightcorner bg-curry">
+                <h3 className="truncate">{asset.className}</h3>
+                <div className="mt-3">
+                  <StarRatingComp />
+                </div>
+              </div>
             </div>
-          </div>
+          </Link>
         );
       })}
     </motion.div>

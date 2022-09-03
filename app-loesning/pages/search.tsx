@@ -3,6 +3,7 @@ import Fuse from "fuse.js";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Carousel } from "./home";
@@ -96,15 +97,17 @@ const SearchBar = (props: any) => {
             >
               <ul className="overflow-y-auto flex flex-col w-full p-4 gap-2 border rounded-[30px] bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium">
                 {results.map((item: any) => (
-                  <li
-                    key={new Date() + item.id}
-                    className="flex flex-wrap gap-2 pb-2 border-b last-of-type:border-none last-of-type:pb-0 border-ashe-medium"
-                  >
-                    <SearchItem>{item.className}</SearchItem>
-                    <SearchItem>{item.trainer.trainerName}</SearchItem>
-                    <SearchItem>{item.classDay}</SearchItem>
-                    <SearchItem>{item.classTime}</SearchItem>
-                  </li>
+                  <Link key={item.id} href={`/classes/${item.id}`}>
+                    <li
+                      key={new Date() + item.id}
+                      className="flex flex-wrap gap-2 pb-2 border-b last-of-type:border-none last-of-type:pb-0 border-ashe-medium"
+                    >
+                      <SearchItem>{item.className}</SearchItem>
+                      <SearchItem>{item.trainer.trainerName}</SearchItem>
+                      <SearchItem>{item.classDay}</SearchItem>
+                      <SearchItem>{item.classTime}</SearchItem>
+                    </li>
+                  </Link>
                 ))}
               </ul>
             </motion.div>

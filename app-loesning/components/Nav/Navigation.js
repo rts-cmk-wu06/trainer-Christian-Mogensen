@@ -12,6 +12,8 @@ const burgerAtom = atom(false);
 
 const Navigation = () => {
   const router = useRouter();
+  const pathSlugBool = router.pathname === "/classes/[classid]";
+
   const path = router.pathname.substring(1);
   const [toggle, setToggle] = useAtom(burgerAtom);
   useEffect(() => {
@@ -26,7 +28,11 @@ const Navigation = () => {
     <>
       {path === "" || path === "/" ? null : (
         <header className="fixed top-0 left-0 right-0 z-50 p-5 ">
-          <nav className="flex justify-between mt-2 list-none text-large">
+          <nav
+            className={`flex justify-between mt-2 list-none text-large ${
+              pathSlugBool && "text-white"
+            }`}
+          >
             <li className="flex items-center ">
               {path === "home" ? (
                 "Popular classes"
@@ -37,6 +43,13 @@ const Navigation = () => {
                 >
                   <IoArrowBackSharp className="mr-2" />
                   My {path}
+                </button>
+              ) : pathSlugBool ? (
+                <button
+                  onClick={() => router.back()}
+                  className="flex items-center"
+                >
+                  <IoArrowBackSharp className="mr-2" />
                 </button>
               ) : (
                 <button
@@ -53,7 +66,9 @@ const Navigation = () => {
               <motion.button
                 animate={{ rotate: toggle ? "-180deg" : "0deg" }}
                 onClick={() => setToggle(!toggle)}
-                className="z-50 text-5xl text-ashe-dark"
+                className={`z-50 text-5xl text-ashe-dark ${
+                  pathSlugBool && "text-white"
+                }`}
               >
                 {!toggle ? <HiMenuAlt3 /> : <MdClose />}
               </motion.button>
@@ -74,7 +89,9 @@ const Navigation = () => {
                   y: "-100vh",
                 }}
                 transition={{ duration: 0.5 }}
-                className="fixed top-0 right-0 w-screen h-screen z-[49] bg-white bg-opacity-75 backdrop-blur-md"
+                className={`fixed top-0 right-0 w-screen h-screen z-[49] bg-white bg-opacity-75 backdrop-blur-md ${
+                  pathSlugBool && "text-white bg-black"
+                }`}
               >
                 <AnimatePresence>
                   <motion.ul

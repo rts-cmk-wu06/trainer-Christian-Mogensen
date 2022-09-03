@@ -74,7 +74,7 @@ const Schedule: NextPage = ({}: any) => {
         <ul>
           {data.map((item: any, i: number) => (
             <ClassItem key={i}>
-              <Link href={`/class/${item.Roster.classId}`}>
+              <Link href={`/classes/${item.Roster.classId}`}>
                 <a>
                   <h3 className="text-xl font-semibold truncate">
                     {item.className}
