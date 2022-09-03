@@ -7,7 +7,6 @@ import { StarRatingComp } from "../home";
 const SingleClass: NextPage = ({ classes, trainers }: any) => {
   const [trainerImg, setTrainerImg] = useState("");
   const classImg = classes?.asset?.url;
-  console.log(classImg.toString());
   useEffect(() => {
     trainers.filter((trainer: any) => {
       if (trainer.trainerName === classes.trainer.trainerName) {
