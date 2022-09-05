@@ -28,10 +28,6 @@ const Home: NextPage = ({ assets }: any) => {
 
   return (
     <>
-      <Head>
-        <title>Svendeprøve - overview</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <div className="w-screen min-h-screen p-5 overflow-x-hidden">
         <AnimatePresence mode="popLayout">
           <motion.div
