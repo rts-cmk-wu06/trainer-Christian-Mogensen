@@ -195,7 +195,41 @@ const BurgerItem = ({ children }) => {
   );
 };
 
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { schema } from "../../utils/userValidation";
+
 const LoginComp = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmitHandler = (data, e) => {
+    e.preventDefault();
+    let myForm = document.getElementById("contactform");
+    let formData = new FormData(myForm);
+    fetch("/", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString(),
+    })
+      .then(() => console.log("Form successfully submitted"))
+      .catch((error) => alert(error));
+
+    // setFirstNameState(data.firstname);
+    // setLastNameState(data.lastname);
+    // setEmailState(data.email);
+    // setConfirmEmailState(data.confirmemail);
+    // setPasswordState(data.password);
+    reset();
+    // navigate("/payment");
+  };
+
   const [login, setLogin] = useState(false);
   function handleForm() {
     setLogin(!login);
@@ -230,23 +264,32 @@ const LoginComp = () => {
               transition={{ duration: 0.3 }}
               className="absolute p-5 top-1/3"
             >
-              <form>
+              <form onSubmit={handleSubmit(onSubmitHandler)}>
                 <div className="gap-5 ">
-                  <label className="text-xl font-semibold">
+                  <h2 className="text-xl font-semibold">
                     Enter your credentials
-                  </label>
+                  </h2>
                   <input
+                    type="text"
+                    name="email"
+                    {...register("email")}
+                    autoComplete="off"
                     className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                     placeholder="Enter your email..."
                   />
+
                   <input
+                    type="password"
+                    name="password"
+                    autoComplete="off"
+                    {...register("password")}
                     className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                     placeholder="Enter your password..."
                   />
                 </div>
                 <button
-                  className="w-full py-4 mt-5 font-semibold text-black uppercase rounded-full bg-curry"
                   type="submit"
+                  className="w-full py-4 mt-5 font-semibold text-black uppercase rounded-full bg-curry"
                 >
                   Log in
                 </button>
