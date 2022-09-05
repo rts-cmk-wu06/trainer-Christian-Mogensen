@@ -1,22 +1,9 @@
-import { motion } from "framer-motion";
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { AiFillStar } from "react-icons/ai";
 
-export async function getStaticProps() {
-  const url = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
-  const res = await fetch(url);
-  const assets = await res.json();
-  return {
-    props: {
-      assets,
-    },
-  };
-}
+import { useContext, useEffect, useState } from "react";
+import { LoginContext, useUserContext } from "../hooks/userContext";
 const userClass: any = {
   classes: [
     {
@@ -61,8 +48,32 @@ const userClass: any = {
     },
   ],
 };
-const Schedule: NextPage = ({}: any) => {
-  const [data, setData] = useState<any>(userClass.classes);
+const Schedule: NextPage = () => {
+  // console.log(assets);
+
+  const [data, setData] = useState<any>([]);
+  const { isLoggedIn, contextToken } = useContext(LoginContext);
+  useEffect(() => {
+    // let usertoken = sessionStorage.getItem("usertoken");
+    // let userId = sessionStorage.getItem("userid");
+    // setUserToken(usertoken);
+    // console.log(usertoken);
+
+    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn}`;
+    fetch(userurl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${contextToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((userdata) => {
+        // console.log(userdata);
+        setData(userdata);
+      });
+  }, []);
+  console.log(data.classes);
 
   return (
     <>
@@ -72,15 +83,15 @@ const Schedule: NextPage = ({}: any) => {
       </Head>
       <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden">
         <ul>
-          {data.map((item: any, i: number) => (
+          {data?.classes?.map((item: any, i: number) => (
             <ClassItem key={i}>
-              <Link href={`/classes/${item.Roster.classId}`}>
+              <Link href={`/classes/${item?.Roster?.classId}`}>
                 <a>
                   <h3 className="text-xl font-semibold truncate">
-                    {item.className}
+                    {item?.className}
                   </h3>
                   <h4 className="mt-3">
-                    {item.classDay} - {item.classTime}
+                    {item?.classDay} - {item?.classTime}
                   </h4>
                 </a>
               </Link>

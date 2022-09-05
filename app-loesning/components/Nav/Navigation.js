@@ -2,26 +2,29 @@ import { AnimatePresence, motion } from "framer-motion";
 import { atom, useAtom } from "jotai";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { IoArrowBackSharp } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 
 // statestore
 export const burgerAtom = atom(false);
-export const userAtom = atom(false);
+export const userIdAtom = atom(null);
 export const formAtom = atom(true);
 export const pathAtom = atom("");
+
 const Navigation = () => {
   const router = useRouter();
-
+  const [toggle, setToggle] = useAtom(burgerAtom);
   const [pathSlugBool, setPathSlugBool] = useAtom(pathAtom);
+
+  const { isLoggedIn, setIsLoggedIn } = useContext(LoginContext);
+
   useEffect(() => {
     setPathSlugBool(router.pathname === "/classes/[classid]");
   }, [router.pathname]);
   const path = router.pathname.substring(1);
-  const [toggle, setToggle] = useAtom(burgerAtom);
-  const [user, setUser] = useAtom(userAtom);
+
   useEffect(() => {
     const body = document.querySelector("body");
     if (toggle === true) {
@@ -32,12 +35,20 @@ const Navigation = () => {
   }, [toggle]);
 
   function handleUser() {
-    setUser(null);
+    setIsLoggedIn(false);
   }
   const [form, setForm] = useAtom(formAtom);
   function handleForm() {
     setForm(!form);
   }
+
+  function handleLogOut() {
+    setIsLoggedIn(false);
+    sessionStorage.removeItem("usertoken");
+    sessionStorage.removeItem("userId");
+    console.log(sessionStorage);
+  }
+
   return (
     <>
       {path === "" || path === "/" ? null : (
@@ -131,10 +142,10 @@ const Navigation = () => {
                     >
                       <BurgerItem>home</BurgerItem>
                       <BurgerItem>search</BurgerItem>
-                      <BurgerItem>schedule</BurgerItem>
-                      {user ? (
+                      {isLoggedIn && <BurgerItem>schedule</BurgerItem>}
+                      {isLoggedIn ? (
                         <button
-                          onClick={handleUser}
+                          onClick={handleLogOut}
                           className="p-4 text-xl font-semibold capitalize"
                         >
                           Log out
@@ -166,6 +177,11 @@ const Navigation = () => {
               </motion.div>
             )}
           </AnimatePresence>
+          <div
+            className={`z-50 rounded-full fixed w-10 h-10 bottom-5 right-5 ${
+              isLoggedIn ? "bg-green-500" : "bg-red-500"
+            }`}
+          ></div>
         </header>
       )}
     </>
@@ -195,12 +211,57 @@ const BurgerItem = ({ children }) => {
   );
 };
 
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
+import { schema } from "../../lib/userValidation";
+import { LoginContext, useLoginContext } from "../../hooks/userContext";
+
+const loginAtom = atom(false);
 const LoginComp = () => {
-  const [login, setLogin] = useState(false);
+  const { setIsLoggedIn, setContextToken } = useContext(LoginContext);
+
+  const [login, setLogin] = useAtom(loginAtom);
+  const [pathSlugBool] = useAtom(pathAtom);
+  const [form, setForm] = useAtom(formAtom);
+  const [errormsg, setErrormsg] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmitHandler = (data, e) => {
+    fetch(process.env.NEXT_PUBLIC_URL + "/auth/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        sessionStorage.setItem("userid", data.userId);
+        sessionStorage.setItem("usertoken", data.token);
+
+        setIsLoggedIn(data.userId);
+        setContextToken(data.token);
+
+        if (data.userId) {
+          setForm(!form);
+        }
+      })
+      .catch((err) => setErrormsg("Error: " + err.message));
+    reset();
+  };
+
   function handleForm() {
     setLogin(!login);
   }
-  const [pathSlugBool] = useAtom(pathAtom);
+
   return (
     <>
       <header className="absolute z-10 top-20 left-5">
@@ -228,25 +289,44 @@ const LoginComp = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ duration: 0.3 }}
-              className="absolute p-5 top-1/3"
+              className="absolute w-full p-5 top-1/3"
             >
-              <form>
-                <div className="gap-5 ">
-                  <label className="text-xl font-semibold">
+              <form onSubmit={handleSubmit(onSubmitHandler)} className="w-full">
+                <div className="w-full gap-5">
+                  <h2 className="text-xl font-semibold">
                     Enter your credentials
-                  </label>
-                  <input
-                    className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-                    placeholder="Enter your email..."
-                  />
-                  <input
-                    className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-                    placeholder="Enter your password..."
-                  />
+                  </h2>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      name="username"
+                      {...register("username")}
+                      autoComplete="off"
+                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      placeholder="Enter your username..."
+                    />
+                    {errors.username?.message && (
+                      <ErrMsg>{errors.username?.message}</ErrMsg>
+                    )}
+                  </div>
+                  <div className="relative block w-full">
+                    <input
+                      type="password"
+                      name="password"
+                      autoComplete="off"
+                      {...register("password")}
+                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      placeholder="Enter your password..."
+                    />
+                    {errors.password?.message && (
+                      <ErrMsg>{errors.password?.message}</ErrMsg>
+                    )}
+                  </div>
                 </div>
+                {errormsg && <p>{errormsg}</p>}
                 <button
-                  className="w-full py-4 mt-5 font-semibold text-black uppercase rounded-full bg-curry"
                   type="submit"
+                  className="w-full py-4 mt-5 font-semibold text-black uppercase rounded-full bg-curry"
                 >
                   Log in
                 </button>
@@ -268,29 +348,55 @@ const LoginComp = () => {
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ duration: 0.3 }}
-              className="absolute p-5 top-1/3"
+              className="absolute w-full p-5 top-1/3"
             >
-              <form>
-                <div className="gap-5 ">
-                  <label className="text-xl font-semibold">
-                    Create your user
-                  </label>
-                  <input
-                    className="w-full p-4 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-                    placeholder="Enter your email..."
-                  />
-                  <input
-                    className="w-full p-4 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-                    placeholder="Enter your password..."
-                  />
-                  <input
-                    className="w-full p-4 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
-                    placeholder="Confirm your password..."
-                  />
+              <form className="w-full">
+                <div className="w-full gap-5">
+                  <h2 className="text-xl font-semibold">Create your user</h2>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      name="username"
+                      // {...register("username")}
+                      autoComplete="off"
+                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      placeholder="Enter your username..."
+                    />
+                    {errors.username?.message && (
+                      <ErrMsg>{errors.username?.message}</ErrMsg>
+                    )}
+                  </div>
+
+                  <div className="relative block w-full">
+                    <input
+                      type="password"
+                      name="password"
+                      autoComplete="off"
+                      // {...register("password")}
+                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      placeholder="Enter your password..."
+                    />
+                    {errors.password?.message && (
+                      <ErrMsg>{errors.password?.message}</ErrMsg>
+                    )}
+                  </div>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      name="confirmpassword"
+                      // {...register("confirmpassword")}
+                      autoComplete="off"
+                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      placeholder="Confirm your password..."
+                    />
+                    {errors.confirmpassword?.message && (
+                      <ErrMsg>{errors.confirmpassword?.message}</ErrMsg>
+                    )}
+                  </div>
                 </div>
                 <button
-                  className="w-full py-4 mt-5 font-semibold text-black uppercase rounded-full bg-curry"
                   type="submit"
+                  className="w-full py-4 mt-5 font-semibold text-black uppercase rounded-full bg-curry"
                 >
                   Sign up
                 </button>
@@ -308,5 +414,16 @@ const LoginComp = () => {
     </>
   );
 };
+const ErrMsg = ({ children }) => (
+  <motion.p
+    initial={{ opacity: 0, x: "100%" }}
+    animate={{ opacity: 1, x: 0 }}
+    exit={{ opacity: 0, x: "100%" }}
+    layout
+    className="absolute right-0 p-2 border rounded-full text-curry -bottom-3 text-smallest bg-licorice border-curry"
+  >
+    {children}
+  </motion.p>
+);
 
 export default Navigation;
