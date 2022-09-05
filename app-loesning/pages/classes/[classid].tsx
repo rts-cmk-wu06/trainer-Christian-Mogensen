@@ -7,11 +7,18 @@ import { StarRatingComp } from "../home";
 
 const SingleClass: NextPage = ({ classes, trainers }: any) => {
   const [trainerImg, setTrainerImg] = useState("");
-  const classImg = classes?.asset?.url;
+  const classImg = classes?.asset?.url.replace(
+    "http://localhost:4000",
+    `${process.env.NEXT_PUBLIC_URL}`
+  );
   useEffect(() => {
     trainers.filter((trainer: any) => {
       if (trainer.trainerName === classes.trainer.trainerName) {
-        setTrainerImg(trainer?.asset?.url);
+        const newurl = trainer?.asset?.url.replace(
+          "http://localhost:4000",
+          `${process.env.NEXT_PUBLIC_URL}`
+        );
+        setTrainerImg(newurl);
       }
     });
   }, []);
@@ -99,7 +106,7 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
 };
 
 export async function getStaticPaths() {
-  const url = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
+  const url = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes`;
   const res = await fetch(url);
   const data = await res.json();
 
@@ -112,11 +119,11 @@ export async function getStaticPaths() {
 
 export async function getStaticProps(context: any) {
   const classid = context.params.classid;
-  const classUrl = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
+  const classUrl = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes`;
   const classRes = await fetch(`${classUrl}/${classid}`);
   const classData = await classRes.json();
 
-  const trainerUrl = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/trainers`;
+  const trainerUrl = `${process.env.NEXT_PUBLIC_URL}/api/v1/trainers`;
   const trainerRes = await fetch(trainerUrl);
   const trainerData = await trainerRes.json();
 

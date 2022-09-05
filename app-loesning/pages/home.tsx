@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
 
 export async function getStaticProps() {
-  const url = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
+  const url = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes`;
   const res = await fetch(url);
   const assets = await res.json();
   return {
@@ -25,13 +25,13 @@ const Home: NextPage = ({ assets }: any) => {
   }, []);
 
   const bigimg = assets[number].asset.url;
+  const newurl = bigimg.replace(
+    "http://localhost:4000",
+    `${process.env.NEXT_PUBLIC_URL}`
+  );
 
   return (
     <>
-      <Head>
-        <title>Svendeprøve - overview</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <div className="w-screen min-h-screen p-5 overflow-x-hidden">
         <AnimatePresence mode="popLayout">
           <motion.div
@@ -47,7 +47,7 @@ const Home: NextPage = ({ assets }: any) => {
                   <Image
                     priority={true}
                     className="pointer-events-none"
-                    src={bigimg}
+                    src={newurl}
                     alt="Picture of the author"
                     width={320}
                     height={320}
@@ -95,11 +95,15 @@ export const Carousel = ({ data }: any) => {
       className="flex gap-4 min-w-[200%] mt-5"
     >
       {data.map((asset: any) => {
+        const newurl = asset.asset.url.replace(
+          "http://localhost:4000",
+          `${process.env.NEXT_PUBLIC_URL}`
+        );
         return (
           <Link key={asset.id} href={`/classes/${asset.id}`}>
             <div className="relative w-1/4 overflow-hidden rounded-3xl">
               <Image
-                src={asset.asset.url}
+                src={newurl}
                 width={150}
                 height={180}
                 priority={true}

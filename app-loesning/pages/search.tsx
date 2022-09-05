@@ -9,8 +9,8 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { Carousel } from "./home";
 
 export async function getStaticProps() {
-  const urlClasses = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`;
-  const urlTrainer = `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/trainers`;
+  const urlClasses = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes`;
+  const urlTrainer = `${process.env.NEXT_PUBLIC_URL}/api/v1/trainers`;
 
   const resClasses = await fetch(urlClasses);
   const resTrainer = await fetch(urlTrainer);
@@ -136,22 +136,28 @@ const Search: NextPage = ({ classes, trainers }: any) => {
           <div className="capitalize">
             <h2 className="font-bold text-medium">popular trainers</h2>
             <div className="flex flex-col gap-4 mt-3">
-              {trainers.map((trainer: any) => (
-                <div key={trainer.id} className="flex gap-4">
-                  <div className="block overflow-hidden h-[120px] rounded-2xl">
-                    <Image
-                      width={120}
-                      height={120}
-                      loading="lazy"
-                      objectFit="cover"
-                      src={trainer.asset.url}
-                    />
+              {trainers.map((trainer: any) => {
+                const newurl = trainer.asset.url.replace(
+                  "http://localhost:4000",
+                  `${process.env.NEXT_PUBLIC_URL}`
+                );
+                return (
+                  <div key={trainer.id} className="flex gap-4">
+                    <div className="block overflow-hidden h-[120px] rounded-2xl">
+                      <Image
+                        width={120}
+                        height={120}
+                        loading="lazy"
+                        objectFit="cover"
+                        src={newurl}
+                      />
+                    </div>
+                    <h3 className="mt-6 font-bold text-medium">
+                      {trainer.trainerName}
+                    </h3>
                   </div>
-                  <h3 className="mt-6 font-bold text-medium">
-                    {trainer.trainerName}
-                  </h3>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </section>
