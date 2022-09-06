@@ -52,7 +52,7 @@ const Navigation = () => {
   return (
     <>
       {path === "" || path === "/" ? null : (
-        <header className="fixed top-0 left-0 right-0 z-50 p-5 ">
+        <header className="fixed top-0 left-0 right-0 z-50 p-5 standalone:top-5 ">
           <nav
             className={`flex justify-between mt-2 list-none text-large ${
               pathSlugBool && "text-white"
@@ -125,8 +125,8 @@ const Navigation = () => {
                   x: "-100vh",
                 }}
                 transition={{ duration: 0.3 }}
-                className={`fixed top-0 right-0 w-screen h-screen z-[49] bg-white bg-opacity-75 backdrop-blur-md ${
-                  pathSlugBool && "text-white bg-black"
+                className={`fixed top-0 right-0 w-screen h-screen z-[49] bg-opacity-75 backdrop-blur-md ${
+                  pathSlugBool ? "text-white bg-black" : "text-black bg-white"
                 }`}
               >
                 <AnimatePresence mode="wait">
@@ -197,8 +197,7 @@ const BurgerItem = ({ children }) => {
   }, [router.pathname]);
   return (
     <li
-      onClick={(e) => {
-        console.log(e.target);
+      onClick={() => {
         setToggle(!toggle);
       }}
       name={children}
@@ -246,7 +245,6 @@ const LoginComp = () => {
       .then((data) => {
         sessionStorage.setItem("userid", data.userId);
         sessionStorage.setItem("usertoken", data.token);
-
         setIsLoggedIn(data.userId);
         setContextToken(data.token);
 
@@ -302,7 +300,7 @@ const LoginComp = () => {
                       name="username"
                       {...register("username")}
                       autoComplete="off"
-                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      className="w-full p-4 pl-10 mt-4 text-black border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your username..."
                     />
                     {errors.username?.message && (
@@ -315,7 +313,7 @@ const LoginComp = () => {
                       name="password"
                       autoComplete="off"
                       {...register("password")}
-                      className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
+                      className="w-full p-4 pl-10 mt-4 text-black border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your password..."
                     />
                     {errors.password?.message && (
@@ -362,9 +360,9 @@ const LoginComp = () => {
                       className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your username..."
                     />
-                    {errors.username?.message && (
+                    {/* {errors.username?.message && (
                       <ErrMsg>{errors.username?.message}</ErrMsg>
-                    )}
+                    )} */}
                   </div>
 
                   <div className="relative block w-full">
@@ -376,9 +374,9 @@ const LoginComp = () => {
                       className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your password..."
                     />
-                    {errors.password?.message && (
+                    {/* {errors.password?.message && (
                       <ErrMsg>{errors.password?.message}</ErrMsg>
-                    )}
+                    )} */}
                   </div>
                   <div className="relative w-full">
                     <input
@@ -389,9 +387,9 @@ const LoginComp = () => {
                       className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Confirm your password..."
                     />
-                    {errors.confirmpassword?.message && (
+                    {/* {errors.confirmpassword?.message && (
                       <ErrMsg>{errors.confirmpassword?.message}</ErrMsg>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 <button

@@ -11,15 +11,20 @@ import "../styles/globals.css";
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <LoginContextProvider>
-      <div className="">
+      <div style={{ WebkitTapHighlightColor: "transparent" }}>
         <Head>
           <title>Trainer</title>
+          <link rel="manifest" href="/site.webmanifest" />
+
           <meta
             name="apple-mobile-web-app-status-bar-style"
             content="black-translucent"
           />
           <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="viewport" content="initial-scale=1, viewport-fit=cover" />
+          <meta
+            name="viewport"
+            content="initial-scale=1, viewport-fit=cover, user-scalable=no"
+          />
           <link
             rel="icon"
             type="image/png"
@@ -157,7 +162,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             href="/apple-splash-1136-640.jpg"
             media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)"
           />
-          <link rel="manifest" href="/site.webmanifest" />
         </Head>
 
         <Navigation />

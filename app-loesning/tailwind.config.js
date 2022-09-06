@@ -29,6 +29,9 @@ module.exports = {
           light: "#fbfbfb",
         },
       },
+      screens: {
+        standalone: { raw: "(display-mode: standalone)" },
+      },
     },
   },
   plugins: [],

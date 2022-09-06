@@ -49,16 +49,9 @@ const userClass: any = {
   ],
 };
 const Schedule: NextPage = () => {
-  // console.log(assets);
-
   const [data, setData] = useState<any>([]);
   const { isLoggedIn, contextToken } = useContext(LoginContext);
   useEffect(() => {
-    // let usertoken = sessionStorage.getItem("usertoken");
-    // let userId = sessionStorage.getItem("userid");
-    // setUserToken(usertoken);
-    // console.log(usertoken);
-
     const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn}`;
     fetch(userurl, {
       method: "GET",
@@ -69,11 +62,9 @@ const Schedule: NextPage = () => {
     })
       .then((res) => res.json())
       .then((userdata) => {
-        // console.log(userdata);
         setData(userdata);
       });
   }, []);
-  console.log(data.classes);
 
   return (
     <>

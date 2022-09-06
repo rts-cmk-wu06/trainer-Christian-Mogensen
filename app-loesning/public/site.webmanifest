@@ -1,5 +1,12 @@
 {
   "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "name": "Trainer App - Nextjs",
+  "theme_color": "#000000",
+  "background_color": "#f1c40e",
+  "short_name": "Trainer",
+  "description": "Det her er et svendeprøveprojekt, lavet af Christian Mogensen",
   "icons": [
     {
       "src": "manifest-icon-192.maskable.png",
