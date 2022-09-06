@@ -197,8 +197,7 @@ const BurgerItem = ({ children }) => {
   }, [router.pathname]);
   return (
     <li
-      onClick={(e) => {
-        console.log(e.target);
+      onClick={() => {
         setToggle(!toggle);
       }}
       name={children}

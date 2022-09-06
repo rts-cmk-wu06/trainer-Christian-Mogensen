@@ -32,9 +32,7 @@ const SearchBar = (props: any) => {
   const [toggle, setToggle] = useState(false);
 
   const fetchClasses = async () => {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_URL}:${process.env.NEXT_PUBLIC_PORT}/api/v1/classes`
-    );
+    const res = await fetch(`${process.env.NEXT_PUBLIC_URL}/api/v1/classes`);
 
     const json = await res.json();
     setData(json);
