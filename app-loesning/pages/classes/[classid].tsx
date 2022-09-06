@@ -107,7 +107,10 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
             <div className="flex justify-between mt-5">
               <div className="flex items-center gap-5">
                 <StarRatingComp ratingVal={ratingnumber} />
-                <p className="font-bold">{ratingnumber}/5</p>
+                {/* <p className="font-bold">
+                  {ratingnumber}
+                  {"/5"}
+                </p> */}
               </div>
               {isLoggedIn && (
                 <button

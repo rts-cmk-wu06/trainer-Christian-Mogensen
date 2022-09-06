@@ -72,7 +72,7 @@ const Schedule: NextPage = () => {
         <title>Svendeprøve - schedule</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden">
+      <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden standalone:mt-28">
         <ul>
           {data?.classes?.map((item: any, i: number) => (
             <ClassItem key={i}>

@@ -124,7 +124,7 @@ const Search: NextPage = ({ classes, trainers }: any) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden">
+      <div className="w-screen min-h-screen p-5 mt-20 overflow-x-hidden standalone:mt-28">
         <SearchBar data={classes} />
         <section className="mt-5">
           <h2 className="font-bold text-medium">Popular classes</h2>

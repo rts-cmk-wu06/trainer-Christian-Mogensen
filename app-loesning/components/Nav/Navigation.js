@@ -91,9 +91,7 @@ const Navigation = () => {
               {!form ? (
                 <motion.button
                   onClick={() => setForm(!form)}
-                  className={`z-50 text-5xl text-ashe-dark ${
-                    pathSlugBool && "text-white"
-                  }`}
+                  className={`z-50 text-5xl text-ashe-dark `}
                 >
                   <IoArrowBackSharp />
                 </motion.button>
@@ -101,9 +99,7 @@ const Navigation = () => {
                 <motion.button
                   animate={{ rotate: toggle ? "-180deg" : "0deg" }}
                   onClick={() => setToggle(!toggle)}
-                  className={`z-50 text-5xl text-ashe-dark ${
-                    pathSlugBool && "text-white"
-                  }`}
+                  className={`z-50 text-5xl text-ashe-dark `}
                 >
                   {!toggle ? <HiMenuAlt3 /> : <MdClose />}
                 </motion.button>
@@ -125,9 +121,7 @@ const Navigation = () => {
                   x: "-100vh",
                 }}
                 transition={{ duration: 0.3 }}
-                className={`fixed top-0 right-0 w-screen h-screen z-[49] bg-opacity-75 backdrop-blur-md ${
-                  pathSlugBool ? "text-white bg-black" : "text-black bg-white"
-                }`}
+                className={`fixed top-0 right-0 w-screen h-screen z-[49] bg-white bg-opacity-90 backdrop-blur-lg`}
               >
                 <AnimatePresence mode="wait">
                   {form ? (
@@ -178,7 +172,7 @@ const Navigation = () => {
             )}
           </AnimatePresence>
           <div
-            className={`z-50 rounded-full fixed w-10 h-10 bottom-5 right-5 ${
+            className={`z-50 rounded-full fixed w-5 h-5 bottom-5 right-5 ${
               isLoggedIn ? "bg-green-500" : "bg-red-500"
             }`}
           ></div>
@@ -266,18 +260,12 @@ const LoginComp = () => {
         <h1 className="font-bold leading-[3.5rem] capitalize text-largest block text-curry">
           <span className="block"> believe</span> yourself
         </h1>
-        <h2
-          className={`relative mt-4 font-bold text-black text-large   ${
-            pathSlugBool && "text-white whitebar"
-          }`}
-        >
+        <h2 className={`relative mt-4 font-bold text-black text-large `}>
           Train like a pro
         </h2>
       </header>
       <div
-        className={`flex flex-col items-center w-full h-full text-black bg-opacity-10 bg-white ${
-          pathSlugBool && "text-white bg-black"
-        }`}
+        className={`flex flex-col items-center w-full h-full text-black bg-opacity-10 bg-white `}
       >
         <AnimatePresence mode="wait">
           {!login && (
@@ -299,7 +287,6 @@ const LoginComp = () => {
                       type="text"
                       name="username"
                       {...register("username")}
-                      autoComplete="off"
                       className="w-full p-4 pl-10 mt-4 text-black border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your username..."
                     />

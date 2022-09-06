@@ -178,35 +178,25 @@ export const Carousel = ({ data }: any) => {
         );
 
         return (
-          <>
-            {newurl ? (
-              <Link href={`/classes/${asset.id}`}>
-                <div className="relative w-1/4 overflow-hidden rounded-3xl">
-                  <Image
-                    src={newurl}
-                    width={150}
-                    height={180}
-                    priority={true}
-                    layout="responsive"
-                    objectFit="cover"
-                  />
+          <Link key={asset.id} href={`/classes/${asset.id}`}>
+            <div className="relative w-1/4 overflow-hidden rounded-3xl">
+              <Image
+                src={newurl}
+                width={150}
+                height={180}
+                priority={true}
+                layout="responsive"
+                objectFit="cover"
+              />
 
-                  <div className="absolute bottom-0 left-0 w-full p-5 roundedrightcorner bg-curry">
-                    <h3 className="truncate">{asset.className}</h3>
-                    <div>
-                      <StarRatingComp fp={true} ratingVal={ratingnumber} />
-                    </div>
-                  </div>
+              <div className="absolute bottom-0 left-0 w-full p-5 roundedrightcorner bg-curry">
+                <h3 className="truncate">{asset.className}</h3>
+                <div>
+                  <StarRatingComp fp={true} ratingVal={ratingnumber} />
                 </div>
-              </Link>
-            ) : (
-              <div className="flex items-center rounded-3xl justify-center w-full h-[180px] text-white bg-ashe-dark">
-                <p className="px-5 text-center">
-                  {"No data found. Try reload page"}
-                </p>
               </div>
-            )}
-          </>
+            </div>
+          </Link>
         );
       })}
     </motion.div>
