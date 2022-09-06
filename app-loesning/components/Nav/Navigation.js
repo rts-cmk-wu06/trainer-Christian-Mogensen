@@ -361,9 +361,9 @@ const LoginComp = () => {
                       className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your username..."
                     />
-                    {errors.username?.message && (
+                    {/* {errors.username?.message && (
                       <ErrMsg>{errors.username?.message}</ErrMsg>
-                    )}
+                    )} */}
                   </div>
 
                   <div className="relative block w-full">
@@ -375,9 +375,9 @@ const LoginComp = () => {
                       className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Enter your password..."
                     />
-                    {errors.password?.message && (
+                    {/* {errors.password?.message && (
                       <ErrMsg>{errors.password?.message}</ErrMsg>
-                    )}
+                    )} */}
                   </div>
                   <div className="relative w-full">
                     <input
@@ -388,9 +388,9 @@ const LoginComp = () => {
                       className="w-full p-4 pl-10 mt-4 border rounded-full bg-ashe-light outline-ashe-medium outline-2 border-ashe-medium"
                       placeholder="Confirm your password..."
                     />
-                    {errors.confirmpassword?.message && (
+                    {/* {errors.confirmpassword?.message && (
                       <ErrMsg>{errors.confirmpassword?.message}</ErrMsg>
-                    )}
+                    )} */}
                   </div>
                 </div>
                 <button

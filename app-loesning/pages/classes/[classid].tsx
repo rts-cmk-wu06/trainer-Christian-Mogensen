@@ -2,10 +2,17 @@ import { assert } from "console";
 import { AnimatePresence, motion } from "framer-motion";
 import { NextPage } from "next";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { useContext, useEffect, useState } from "react";
+import { LoginContext } from "../../hooks/userContext";
 import { StarRatingComp } from "../home";
 
 const SingleClass: NextPage = ({ classes, trainers }: any) => {
+  const router = useRouter();
+  const { query } = router;
+  const { classid } = query;
+  const { isLoggedIn, contextToken } = useContext(LoginContext);
+
   const [trainerImg, setTrainerImg] = useState("");
   const classImg = classes?.asset?.url.replace(
     "http://localhost:4000",
@@ -22,6 +29,46 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
       }
     });
   }, []);
+  const [userIsSignedUp, setUserIsSignedUp] = useState([]);
+  const [signupBool, setSignupBool] = useState<any>(null);
+  const [testBool, setTestBool] = useState<any>(null);
+  useEffect(() => {
+    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn}`;
+    fetch(userurl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${contextToken}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((userdata) => {
+        setUserIsSignedUp(userdata);
+        userIsSignedUp?.filter((signed: any) => {
+          if (signed.classes.id === classid) {
+            setTestBool(signed.classes.id);
+          }
+        });
+      });
+  }, [trainerImg]);
+  const [leave, setLeave] = useState<any>(null);
+  function handleClassSignup() {
+    const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn}/classes/${classid}`;
+    fetch(signUpUrl, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${contextToken}` },
+    })
+      .then((res) => res.json())
+      .then((data) => setSignupBool(data));
+  }
+  function handleClassLeave() {
+    const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn}/classes/${classid}`;
+    fetch(signUpUrl, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${contextToken}` },
+    }).then((res) => setSignupBool(null));
+  }
+
   return (
     <div className="min-h-screen">
       <AnimatePresence mode="wait">
@@ -65,7 +112,6 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
         <motion.main
           initial={{ opacity: 0, y: "-100%" }}
           animate={{ opacity: 1, y: 0 }}
-          // exit={{ opacity: 0, y: "-100%" }}
           transition={{ duration: 0.3, delay: 0.1 }}
           className="p-5"
         >
@@ -95,9 +141,21 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
                 {classes.trainer.trainerName}
               </h3>
             </div>
-            <button className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry">
-              sign up
-            </button>
+            {signupBool?.id ? (
+              <button
+                onClick={handleClassLeave}
+                className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
+              >
+                leave
+              </button>
+            ) : (
+              <button
+                onClick={handleClassSignup}
+                className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
+              >
+                sign up
+              </button>
+            )}
           </section>
         </motion.main>
       </AnimatePresence>
