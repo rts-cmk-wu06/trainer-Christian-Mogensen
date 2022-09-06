@@ -6,13 +6,13 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { LoginContext } from "../../hooks/userContext";
 import { StarRatingComp } from "../home";
+import Slider from "react-input-slider";
 
-const SingleClass: NextPage = ({ classes, trainers }: any) => {
+const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
   const router = useRouter();
   const { query } = router;
   const { classid } = query;
   const { isLoggedIn, contextToken } = useContext(LoginContext);
-
   const [trainerImg, setTrainerImg] = useState("");
   const classImg = classes?.asset?.url.replace(
     "http://localhost:4000",
@@ -31,7 +31,7 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
   }, []);
   const [userIsSignedUp, setUserIsSignedUp] = useState([]);
   const [signupBool, setSignupBool] = useState<any>(null);
-  const [testBool, setTestBool] = useState<any>(null);
+  const [, setTestBool] = useState<any>(null);
   useEffect(() => {
     const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn}`;
     fetch(userurl, {
@@ -45,13 +45,13 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
       .then((userdata) => {
         setUserIsSignedUp(userdata);
         userIsSignedUp?.filter((signed: any) => {
-          if (signed.classes.id === classid) {
-            setTestBool(signed.classes.id);
+          if (signed?.classes?.id === classid) {
+            setTestBool(signed?.classes?.id);
           }
         });
       });
   }, [trainerImg]);
-  const [leave, setLeave] = useState<any>(null);
+
   function handleClassSignup() {
     const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn}/classes/${classid}`;
     fetch(signUpUrl, {
@@ -68,6 +68,14 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
       headers: { Authorization: `Bearer ${contextToken}` },
     }).then((res) => setSignupBool(null));
   }
+  // Logic to calculate rating numbers to avg with a ceil method - needed for rating
+  let sum = rating
+    .map((item: any) => item.rating)
+    .reduce((prev: any, curr: any) => prev + curr, 0);
+  let avg = sum / rating.length;
+  let noDecimalAvg = Math.ceil(avg);
+  const ratingnumber = noDecimalAvg;
+  const [rateOverlay, setRateOverlay] = useState(false);
 
   return (
     <div className="min-h-screen">
@@ -98,12 +106,17 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
             </h1>
             <div className="flex justify-between mt-5">
               <div className="flex items-center gap-5">
-                <StarRatingComp />
-                <p className="font-bold">5/5</p>
+                <StarRatingComp ratingVal={ratingnumber} />
+                <p className="font-bold">{ratingnumber}/5</p>
               </div>
-              <button className="p-2 px-6 font-bold uppercase border-2 rounded-full border-curry text-curry">
-                rate
-              </button>
+              {isLoggedIn && (
+                <button
+                  onClick={() => setRateOverlay(!rateOverlay)}
+                  className="p-2 px-6 font-bold uppercase border-2 rounded-full border-curry text-curry"
+                >
+                  rate
+                </button>
+              )}
             </div>
           </header>
         </motion.div>
@@ -141,28 +154,139 @@ const SingleClass: NextPage = ({ classes, trainers }: any) => {
                 {classes.trainer.trainerName}
               </h3>
             </div>
-            {signupBool?.id ? (
-              <button
-                onClick={handleClassLeave}
-                className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
-              >
-                leave
-              </button>
-            ) : (
-              <button
-                onClick={handleClassSignup}
-                className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
-              >
-                sign up
-              </button>
+            {isLoggedIn && (
+              <>
+                {signupBool?.id ? (
+                  <button
+                    onClick={handleClassLeave}
+                    className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
+                  >
+                    leave
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleClassSignup}
+                    className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
+                  >
+                    sign up
+                  </button>
+                )}
+              </>
             )}
           </section>
         </motion.main>
+      </AnimatePresence>
+      <AnimatePresence>
+        {rateOverlay && (
+          <RateOverlayComp
+            overlay={rateOverlay}
+            classtitle={classes.className}
+            fun={setRateOverlay}
+            classNumber={classid}
+          />
+        )}
       </AnimatePresence>
     </div>
   );
 };
 
+const RateOverlayComp = ({ overlay, fun, classtitle, classNumber }: any) => {
+  const [rating, setRating] = useState({ x: 3 });
+  function changeHandler({ x }: any) {
+    setRating((rating) => ({ ...rating, x }));
+  }
+  const { isLoggedIn, contextToken } = useContext(LoginContext);
+  const [success, setSuccess] = useState(false);
+  function handleRating(e: any) {
+    e.preventDefault();
+    const rateUrl = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes/${classNumber}/ratings`;
+    fetch(rateUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${contextToken}`,
+      },
+      body: JSON.stringify({
+        userId: isLoggedIn,
+        rating: rating.x,
+      }),
+    }).then((res) => {
+      res.ok && setSuccess(!success);
+    });
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, delay: 1 }}
+      onClick={() => fun(!overlay)}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-md"
+    >
+      <div className="w-full px-5">
+        <AnimatePresence>
+          {success && (
+            <motion.div
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col items-center w-full p-5 text-center bg-white rounded-md"
+            >
+              <p>Thanks for your vote!</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {!success && (
+            <motion.form
+              initial={{ x: "150%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "150%" }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="flex flex-col items-center w-full gap-5 p-5 text-center bg-white rounded-md"
+            >
+              <label className="">Rate the {classtitle} class</label>
+              <StarRatingComp ratingVal={rating.x} />
+              <Slider
+                xmin={0}
+                xmax={5}
+                x={rating.x}
+                onChange={changeHandler}
+                styles={{
+                  track: {
+                    backgroundColor: "#cecece",
+                    height: "2px",
+                  },
+                  active: {
+                    backgroundColor: "#000000",
+                  },
+                  thumb: {
+                    width: 15,
+                    height: 15,
+                    backgroundColor: `rgb(${241},${196},${14})`,
+                  },
+                  disabled: {
+                    opacity: 0.5,
+                  },
+                }}
+              />
+
+              <button
+                type="submit"
+                onClick={handleRating}
+                className="w-full py-4 mt-5 font-semibold uppercase rounded-full bg-curry"
+              >
+                save your rating
+              </button>
+            </motion.form>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+};
 export async function getStaticPaths() {
   const url = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes`;
   const res = await fetch(url);
@@ -185,7 +309,13 @@ export async function getStaticProps(context: any) {
   const trainerRes = await fetch(trainerUrl);
   const trainerData = await trainerRes.json();
 
-  return { props: { classes: classData, trainers: trainerData } };
+  const ratingUrl = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes/${classid}/ratings`;
+  const ratingRes = await fetch(ratingUrl);
+  const ratingData = await ratingRes.json();
+
+  return {
+    props: { classes: classData, trainers: trainerData, rating: ratingData },
+  };
 }
 
 export default SingleClass;
