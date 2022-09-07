@@ -6,6 +6,32 @@
 
 @layer base {
     html {
-        @apply font-poppins bg-ashe-light
+        @apply bg-white font-poppins;
     }
+
+}
+.speed{
+    transition: 10s;
+    overflow:hidden;
+}
+.whitebar:after{
+    position: absolute;
+    content: "";
+    width: 50px;
+    height:2px;
+    background-color: #fff;
+    left:-56px;
+    top:50%
+}
+.blackbar:after{
+    position: absolute;
+    content: "";
+    width: 50px;
+    height:2px;
+    background-color: #000;
+    left:-56px;
+    top:50%
+}
+.roundedrightcorner{
+    border-radius:0 50px 0 0;
 }
