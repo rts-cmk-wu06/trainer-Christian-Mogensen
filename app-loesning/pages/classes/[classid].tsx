@@ -13,14 +13,16 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
   const { query } = router;
   const { classid } = query;
   const { isLoggedIn } = useContext(LoginContext);
+  const [signupBool, setSignupBool] = useState<any>(null);
   const [trainerImg, setTrainerImg] = useState("");
+
   const classImg = classes?.asset?.url.replace(
     "http://localhost:4000",
     `${process.env.NEXT_PUBLIC_URL}`
   );
   useEffect(() => {
     trainers.filter((trainer: any) => {
-      if (trainer.trainerName === classes.trainer.trainerName) {
+      if (trainer?.trainerName === classes?.trainer?.trainerName) {
         const newurl = trainer?.asset?.url.replace(
           "http://localhost:4000",
           `${process.env.NEXT_PUBLIC_URL}`
@@ -29,28 +31,6 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
       }
     });
   }, []);
-  const [userIsSignedUp, setUserIsSignedUp] = useState([]);
-  const [signupBool, setSignupBool] = useState<any>(null);
-  const [, setTestBool] = useState<any>(null);
-  useEffect(() => {
-    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn.id}`;
-    fetch(userurl, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${isLoggedIn.id}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((userdata) => {
-        setUserIsSignedUp(userdata);
-        userIsSignedUp?.filter((signed: any) => {
-          if (signed?.classes?.id === classid) {
-            setTestBool(signed?.classes?.id);
-          }
-        });
-      });
-  }, [trainerImg]);
 
   function handleClassSignup() {
     const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn.id}/classes/${classid}`;
@@ -109,7 +89,7 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
                 <StarRatingComp ratingVal={ratingnumber} />
                 <p className="font-bold">{ratingnumber}/5</p>
               </div>
-              {isLoggedIn && (
+              {isLoggedIn.id && (
                 <button
                   onClick={() => setRateOverlay(!rateOverlay)}
                   className="p-2 px-6 font-bold uppercase border-2 rounded-full border-curry text-curry"
@@ -154,7 +134,7 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
                 {classes.trainer.trainerName}
               </h3>
             </div>
-            {isLoggedIn && (
+            {isLoggedIn.id && (
               <>
                 {signupBool?.id ? (
                   <button

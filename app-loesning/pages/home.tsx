@@ -6,7 +6,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AiFillStar } from "react-icons/ai";
-const rngAtom = atom(0);
 
 const Home: NextPage = ({ assets, rating, session }: any) => {
   const bigimg = session?.asset?.url;
@@ -34,35 +33,27 @@ const Home: NextPage = ({ assets, rating, session }: any) => {
             transition={{ duration: 0.5 }}
             className="w-full mt-20"
           >
-            {newurl ? (
-              <Link href={`/classes/${session?.id}`}>
-                <div className="relative w-full overflow-hidden rounded-3xl homecard">
-                  {newurl && (
-                    <Image
-                      priority={true}
-                      className="pointer-events-none"
-                      src={newurl}
-                      alt="Picture of the author"
-                      width={320}
-                      height={320}
-                      layout="responsive"
-                      objectFit="cover"
-                    />
-                  )}
-                  <div className="absolute bottom-0 left-0 w-3/4 p-5 pb-10 roundedrightcorner bg-curry">
-                    <h1 className="text-2xl font-bold ">
-                      {session?.className}
-                    </h1>
+            <Link href={`/classes/${session?.id}`}>
+              <div className="relative w-full overflow-hidden rounded-3xl homecard">
+                {newurl && (
+                  <Image
+                    priority={true}
+                    className="pointer-events-none"
+                    src={newurl}
+                    alt="Picture of the author"
+                    width={320}
+                    height={320}
+                    layout="responsive"
+                    objectFit="cover"
+                  />
+                )}
+                <div className="absolute bottom-0 left-0 w-3/4 p-5 pb-10 roundedrightcorner bg-curry">
+                  <h1 className="text-2xl font-bold ">{session?.className}</h1>
 
-                    <StarRatingComp fp={true} ratingVal={correctRating} />
-                  </div>
+                  <StarRatingComp fp={true} ratingVal={correctRating} />
                 </div>
-              </Link>
-            ) : (
-              <div className="flex items-center rounded-3xl justify-center w-full h-[320px] text-white bg-ashe-dark">
-                {"No data found. Try reload page"}
               </div>
-            )}
+            </Link>
           </motion.div>
         </AnimatePresence>
         <div className="mt-5">
@@ -78,7 +69,7 @@ export async function getStaticProps() {
   const url = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes`;
   const res = await fetch(url);
   const assets = await res.json();
-  const rng = Math.floor(Math.random() * assets.length);
+  const rng = Math.floor(Math.random() * assets.length) || 1;
 
   const sessionUrl = `${process.env.NEXT_PUBLIC_URL}/api/v1/classes/${rng}`;
   const sessionRes = await fetch(sessionUrl);
