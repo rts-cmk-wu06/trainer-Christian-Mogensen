@@ -178,7 +178,7 @@ const Navigation = () => {
             )}
           </AnimatePresence>
           <div
-            className={`z-50 rounded-full fixed w-10 h-10 bottom-5 right-5 ${
+            className={`z-50 rounded-full fixed w-5 h-5 bottom-5 right-5 ${
               isLoggedIn ? "bg-green-500" : "bg-red-500"
             }`}
           ></div>
