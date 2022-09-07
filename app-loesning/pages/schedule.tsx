@@ -50,14 +50,14 @@ const userClass: any = {
 };
 const Schedule: NextPage = () => {
   const [data, setData] = useState<any>([]);
-  const { isLoggedIn, contextToken } = useContext(LoginContext);
+  const { isLoggedIn } = useContext(LoginContext);
   useEffect(() => {
-    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn}`;
+    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn.id}`;
     fetch(userurl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${contextToken}`,
+        Authorization: `Bearer ${isLoggedIn.token}`,
       },
     })
       .then((res) => res.json())

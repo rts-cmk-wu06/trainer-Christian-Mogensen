@@ -12,7 +12,7 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
   const router = useRouter();
   const { query } = router;
   const { classid } = query;
-  const { isLoggedIn, contextToken } = useContext(LoginContext);
+  const { isLoggedIn } = useContext(LoginContext);
   const [trainerImg, setTrainerImg] = useState("");
   const classImg = classes?.asset?.url.replace(
     "http://localhost:4000",
@@ -33,12 +33,12 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
   const [signupBool, setSignupBool] = useState<any>(null);
   const [, setTestBool] = useState<any>(null);
   useEffect(() => {
-    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn}`;
+    const userurl = `${process.env.NEXT_PUBLIC_URL}/api/v1/users/${isLoggedIn.id}`;
     fetch(userurl, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${contextToken}`,
+        Authorization: `Bearer ${isLoggedIn.id}`,
       },
     })
       .then((res) => res.json())
@@ -53,19 +53,19 @@ const SingleClass: NextPage = ({ classes, trainers, rating }: any) => {
   }, [trainerImg]);
 
   function handleClassSignup() {
-    const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn}/classes/${classid}`;
+    const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn.id}/classes/${classid}`;
     fetch(signUpUrl, {
       method: "POST",
-      headers: { Authorization: `Bearer ${contextToken}` },
+      headers: { Authorization: `Bearer ${isLoggedIn.token}` },
     })
       .then((res) => res.json())
       .then((data) => setSignupBool(data));
   }
   function handleClassLeave() {
-    const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn}/classes/${classid}`;
+    const signUpUrl = `https://svendeproeve-christian.herokuapp.com/api/v1/users/${isLoggedIn.id}/classes/${classid}`;
     fetch(signUpUrl, {
       method: "DELETE",
-      headers: { Authorization: `Bearer ${contextToken}` },
+      headers: { Authorization: `Bearer ${isLoggedIn.token}` },
     }).then((res) => setSignupBool(null));
   }
   // Logic to calculate rating numbers to avg with a ceil method - needed for rating
@@ -204,15 +204,17 @@ const RateOverlayComp = ({ overlay, fun, classtitle, classNumber }: any) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${contextToken}`,
+        Authorization: `Bearer ${isLoggedIn.token}`,
       },
       body: JSON.stringify({
-        userId: isLoggedIn,
+        userId: isLoggedIn.id,
         rating: rating.x,
       }),
-    }).then((res) => {
-      res.ok && setSuccess(!success);
-    });
+    })
+      .then((res) => {
+        res.ok && setSuccess(!success);
+      })
+      .catch((err) => console.log(err.message));
   }
 
   return (
