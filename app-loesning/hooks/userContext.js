@@ -7,14 +7,10 @@ export const useUserContext = () => {
 };
 
 export const LoginContextProvider = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [contextToken, setContextToken] = useState(null);
-
+  const [isLoggedIn, setIsLoggedIn] = useState({});
   const store = {
     isLoggedIn,
     setIsLoggedIn,
-    contextToken,
-    setContextToken,
   };
 
   return (

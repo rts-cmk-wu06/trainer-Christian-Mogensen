@@ -34,19 +34,14 @@ const Navigation = () => {
     }
   }, [toggle]);
 
-  function handleUser() {
-    setIsLoggedIn(false);
-  }
   const [form, setForm] = useAtom(formAtom);
   function handleForm() {
     setForm(!form);
   }
 
   function handleLogOut() {
-    setIsLoggedIn(false);
-    sessionStorage.removeItem("usertoken");
-    sessionStorage.removeItem("userId");
-    console.log(sessionStorage);
+    setIsLoggedIn({});
+    sessionStorage.clear();
   }
 
   return (
@@ -142,8 +137,8 @@ const Navigation = () => {
                     >
                       <BurgerItem>home</BurgerItem>
                       <BurgerItem>search</BurgerItem>
-                      {isLoggedIn && <BurgerItem>schedule</BurgerItem>}
-                      {isLoggedIn ? (
+                      {isLoggedIn.id && <BurgerItem>schedule</BurgerItem>}
+                      {isLoggedIn.id ? (
                         <button
                           onClick={handleLogOut}
                           className="p-4 text-xl font-semibold capitalize"
@@ -179,7 +174,7 @@ const Navigation = () => {
           </AnimatePresence>
           <div
             className={`z-50 rounded-full fixed w-5 h-5 bottom-5 right-5 ${
-              isLoggedIn ? "bg-green-500" : "bg-red-500"
+              isLoggedIn.id ? "bg-green-500" : "bg-red-500"
             }`}
           ></div>
         </header>
@@ -212,12 +207,12 @@ const BurgerItem = ({ children }) => {
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
+import { LoginContext } from "../../hooks/userContext";
 import { schema } from "../../lib/userValidation";
-import { LoginContext, useLoginContext } from "../../hooks/userContext";
 
 const loginAtom = atom(false);
 const LoginComp = () => {
-  const { setIsLoggedIn, setContextToken } = useContext(LoginContext);
+  const { setIsLoggedIn } = useContext(LoginContext);
 
   const [login, setLogin] = useAtom(loginAtom);
   const [pathSlugBool] = useAtom(pathAtom);
@@ -245,8 +240,7 @@ const LoginComp = () => {
       .then((data) => {
         sessionStorage.setItem("userid", data.userId);
         sessionStorage.setItem("usertoken", data.token);
-        setIsLoggedIn(data.userId);
-        setContextToken(data.token);
+        setIsLoggedIn({ id: data.userId, token: data.token });
 
         if (data.userId) {
           setForm(!form);
